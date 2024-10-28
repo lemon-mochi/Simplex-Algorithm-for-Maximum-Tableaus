@@ -5,12 +5,10 @@ import numpy as np
 
 # change this to match the problem
 array = np.array([
-    [-1, 0, 0, 0, -300],
-    [-1, -1, 0, 0, -500],
-    [-1, -1, -1, -1, -900],
-    [0, 1, 0, 1, 300],
-    [0, 0, 1, 0, 200],
-    [-1, -0.4, -0.4, -0.25, 0]
+    [-1, -1, 0, -2],
+    [0, 1, -1, -3],
+    [2, 0, 1, 8],
+    [1, -1, 1, 0]
 ]).astype(np.float64)
 
 rows, cols = array.shape
@@ -62,7 +60,7 @@ def simplexAlgorithm():
                 print(array)
             else:
                 print("Tableau is infeasible")
-                return
+                return "Error"
         else: # all values in last column are non negative
             last_column_all_non_neg = True
             return
@@ -70,7 +68,12 @@ def simplexAlgorithm():
 def stepTwo():
     last_row_all_non_pos = False
     last_row = array[-1, :]
+    iterations = 0
     while (last_row_all_non_pos == False):
+        if (iterations > 10):
+            print("probably cycling")
+            return
+        iterations += 1
         column_index = None
         # subtract one so the loop doesn't reach the last column
         for i in range(len(last_row) - 1):
@@ -79,7 +82,8 @@ def stepTwo():
 
         if column_index is not None:
             ratios = []
-            for i in range(rows):
+            # subtract one to avoid the last row
+            for i in range(rows - 1):
                 if array[i][column_index] > 0:
                     ratio = array[i, -1] / array[i, column_index]
                     ratios.append((ratio, i))
@@ -102,7 +106,8 @@ def stepTwo():
             return
 
 def main():
-    simplexAlgorithm()
+    if (simplexAlgorithm() == "Error"):
+        return
     stepTwo()
 
 main()
